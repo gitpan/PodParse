@@ -3,15 +3,27 @@ to improve it. I (Kenneth Albanowski, kjahds@kjahds.com) will be acting as
 maintainer for right now, so if you improve the code, please submit changes
 back to me. Thank you.
 
- "Version 0.1"
+ "Version 0.03"
+ 
+ (Version 0.1 was first public "release". Version 0.02 was next, and
+ included a bit of annotation. Next is 0.03, which shifts modules over to
+ proper Pod:: names.)
  
 
 Each of the p2* executables is in a runnable state (more or less) without
 worrying about Makefile.PL, and each takes a single pod filename as an
 argument. They'll dump their respective formatted code to stdout.
 
-html currently does no separate indexing, although the steps are separated in
-the file. 
+(Oops, no, p2man is broken. I was separating out the prepared header, and
+never got the middle bit finished.)
+
+html currently does no separate indexing, although the steps are separated
+in the file. (The indexing step really should go to a separate indexing
+program.)
+
+Note the naming scheme: Pod::HTML, Pod::Man, Pod::Latex, Pod::Index,
+Pod::Pod, etc. The p2* executables are just shadows of what will eventually
+replace pod2*. All actual formatting code should go in the Pod:: library.
 
 
 ToDo:

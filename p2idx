@@ -1,8 +1,8 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -I.
 
-use Parse;
+use Pod::Parse;
 
-$x = new Parse;
+$x = new Pod::Parse;
 
 $idx=0;
 
@@ -19,7 +19,7 @@ sub doindex {
 				foreach (@i) {
 					$idx{join("/",@$_)} = [$name,$idx,$file];
 				}
-				#print "Index: ",Parse::dumpout([@i]),"\n";
+				#print "Index: ",Pod::Parse::dumpout([@i]),"\n";
 			} else {
 				doindex(@i);
 			}

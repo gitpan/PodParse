@@ -1,8 +1,8 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -I.
 
-use Parse;
+use Pod::Parse;
 
-$x = new Parse;
+$x = new Pod::Parse;
 
 $col=0;
 $lmargin=0;
@@ -62,7 +62,7 @@ sub flowed {
 				output_flow(">");
 			}			
 		} else {
-			$i =~ s/([<>])/'E<' . $Parse::ASCII2Escape{$1} . '>'/ge;
+			$i =~ s/([<>])/'E<' . $Pod::Parse::ASCII2Escape{$1} . '>'/ge;
 			output_flow(split(/(\S+\s*)/,$i));
 		}
 	}
@@ -85,7 +85,7 @@ sub doindex {
 				foreach (@i) {
 					$idx{join("/",@$_)} = [$name,$idx,"perlvar.pod"];
 				}
-				#print "Index: ",Parse::dumpout([@i]),"\n";
+				#print "Index: ",Pod::Parse::dumpout([@i]),"\n";
 			} else {
 				doindex(@i);
 			}

@@ -1,19 +1,19 @@
 #!/usr/bin/perl
 
 
-use Parse;
+use Pod::Parse;
 
-$x = new Parse;
+$x = new Pod::Parse;
 
 #@r = $x->parse_from_file_by_name("tp2");
-@r = $x->parse_from_file_by_name("newfunc.pod",sub {print Parse::dumpout(\@_),"\n"});
+@r = $x->parse_from_file_by_name("newfunc.pod",sub {print Pod::Parse::dumpout(\@_),"\n"});
 #@r = $x->parse_from_file_by_name("pod/perlrun.pod");
 
 #while(@i=splice(@r,0,6)) {
-#	print Parse::dumpout(\@i),"\n";
+#	print Pod::Parse::dumpout(\@i),"\n";
 #}
 
-#print Parse::dumpout(\@r),"\n";
+#print Pod::Parse::dumpout(\@r),"\n";
 
 =without auto-indexing
 

@@ -1,8 +1,8 @@
-package HTML; #eventuall Pod::HTML
+package Pod::HTML;
 
 sub import {}
 
-use Parse;
+use Pod::Parse;
 
 sub findindex {
 	my(@a) = @_;
@@ -48,12 +48,12 @@ sub flowed {
 				$out .= '#'.$id->[0].'">' if $id;
 				$out .= "{r}". flowed(@{$i[0]});
 				$out .= "</A>" if $id;
-#				$out .= "{R:".Parse::dumpout([@i])."} ";
+#				$out .= "{R:".Pod::Parse::dumpout([@i])."} ";
 			}
 			elsif($c eq "X") { # Index
 				my($id) = findindex(@i);
 				$out .= '<A NAME="'.$id->[0].'">'.flowed(@{$i[0]})."</A>";
-#				$out .= "{X:".Parse::dumpout([@i])."} ";
+#				$out .= "{X:".Pod::Parse::dumpout([@i])."} ";
 			} 
 			elsif($c eq "E") { # Escape
 				$out .= '&'.$i[0].';';
@@ -64,11 +64,11 @@ sub flowed {
 		} else {
 			while(@waitingindex and length($i)) {
 				my($c) = substr($i,0,1);
-				$c =~ s/([<>&])/ '&'.$Parse::ASCII2Escape{$1}.';' /ge;
+				$c =~ s/([<>&])/ '&'.$Pod::Parse::ASCII2Escape{$1}.';' /ge;
 				$out .= '<A NAME="'.(shift @waitingindex).'">'.$c.'</A>';
 				substr($i,0,1)="";
 			}
-			$i =~ s/([<>&])/ '&'.$Parse::ASCII2Escape{$1}.';' /ge;
+			$i =~ s/([<>&])/ '&'.$Pod::Parse::ASCII2Escape{$1}.';' /ge;
 			$out .= $i;
 		}
 	}
@@ -92,7 +92,7 @@ sub doindex {
 				foreach (@i) {
 					$idx{join("/",@$_)} = [$name,$idx,"perlvar.pod"];
 				}
-				#print "Index: ",Parse::dumpout([@i]),"\n";
+				#print "Index: ",Pod::Parse::dumpout([@i]),"\n";
 			} else {
 				doindex(@i);
 			}
@@ -151,7 +151,7 @@ sub Format {
 		}
 	}
 	elsif( $cmd eq "item") {
-#		print "v=".Parse::dumpout($var2)."\n";
+#		print "v=".Pod::Parse::dumpout($var2)."\n";
 		if($var1->[0] eq "bullet" or $var1->[0] eq "number") {
 			print " <LI> ";
 			print "<!-- #".$var->[1]." --> " if $var1->[0] eq "number";
@@ -168,17 +168,17 @@ sub Format {
 		$var1 =~ s/^/        /gm;
 		while(@waitingindex and length($var1)) {
 			my($c) = substr($var1,0,1);
-			$c =~ s/([<>&])/ '&'.$Parse::ASCII2Escape{$1}.';' /ge;
+			$c =~ s/([<>&])/ '&'.$Pod::Parse::ASCII2Escape{$1}.';' /ge;
 			print '<A NAME="'.(shift @waitingindex).'">'.$c.'</A>';
 			substr($var1,0,1)="";
 		}
-		$var1 =~ s/([<>&])/ "&".$Parse::ASCII2Escape{$1}.";" /ge;
+		$var1 =~ s/([<>&])/ "&".$Pod::Parse::ASCII2Escape{$1}.";" /ge;
 		#$var1 =~ s/([<>])/$1$1/g;
 		print $var1;
 		print "\n</PRE>\n\n";
 	}
 	elsif( $cmd eq "flow") {
-		$f = Parse::wrap(flowed(@$var2),75);
+		$f = Pod::Parse::wrap(flowed(@$var2),75);
 		print $f, "<P>\n\n";
 	}
 	elsif( $cmd eq "comment" ) {
@@ -194,7 +194,7 @@ sub Format {
 
 sub FormatFile {
 	my($file) = @_;
-	my($x) = new Parse;
+	my($x) = new Pod::Parse;
 	$x->parse_from_file_by_name($file,\&Format);
 }
 

@@ -1,7 +1,7 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -I.
 
-use Parse;
-use HTML;
+use Pod::Parse;
+use Pod::HTML;
 
-$x = new Parse;
-$x->parse_from_file_by_name($ARGV[0] || "newfunc.pod",\&HTML::Format);
+$x = new Pod::Parse;
+$x->parse_from_file_by_name($ARGV[0] || "newfunc.pod",\&Pod::HTML::Format);

@@ -1,7 +1,7 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -I.
 
-use Parse;
-use RTF;
+use Pod::Parse;
+use Pod::RTF;
 
-$x = new Parse;
-$x->parse_from_file_by_name($ARGV[0] || "newfunc.pod",\&RTF::Format);
+$x = new Pod::Parse;
+$x->parse_from_file_by_name($ARGV[0] || "newfunc.pod",\&Pod::RTF::Format);

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 
-package Parse;
+package Pod::Parse;
 
 
 require Exporter;
@@ -21,8 +21,8 @@ Pod::Parse - Parse the pod (Plain Old Documentation) portion of a file
 =head1 SYNOPSIS
 
 
-	use Parse;
-	$p = new Parse;
+	use Pod::Parse;
+	$p = new Pod::Parse;
 	$p->parse_from_file_by_name(FILENAME, CALLBACK);
 
 =head1 DESCRIPTION

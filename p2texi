@@ -1,8 +1,8 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -I.
 
-use Parse;
+use Pod::Parse;
 
-$x = new Parse;
+$x = new Pod::Parse;
 
 sub findindex {
 	my(@a) = @_;
@@ -57,13 +57,13 @@ sub flowed {
 				#$out .= "{r}". flowed(@{$i[0]});
 				$out .= flowed(@{$i[0]});
 				#$out .= "</A>" if $id;
-#				#$out .= "{R:".Parse::dumpout([@i])."} ";
+#				#$out .= "{R:".Pod::Parse::dumpout([@i])."} ";
 			}
 			elsif($c eq "X") { # Index
 				my($id) = findindex(@i);
 				$out .= flowed(@{$i[0]});
 				#$out .= '<A NAME="'.$id->[0].'">'.flowed(@{$i[0]})."</A>";
-#				#@$out .= "{X:".Parse::dumpout([@i])."} ";
+#				#@$out .= "{X:".Pod::Parse::dumpout([@i])."} ";
 			} 
 			elsif($c eq "E") { # Escape
 				$out .= '&'.$i[0].';';
@@ -102,7 +102,7 @@ sub doindex {
 				foreach (@i) {
 					$idx{join("/",@$_)} = [$name,$idx,"perlvar.pod"];
 				}
-				#print "Index: ",Parse::dumpout([@i]),"\n";
+				#print "Index: ",Pod::Parse::dumpout([@i]),"\n";
 			} else {
 				doindex(@i);
 			}
@@ -226,7 +226,7 @@ sub dump2 {
 		print "\n\@end example\n\@noindent\n";
 	}
 	elsif( $cmd eq "flow") {
-		$f = Parse::wrap(flowed(@$var2),75);
+		$f = Pod::Parse::wrap(flowed(@$var2),75);
 		print $f,"\n\n";
 	}
 	elsif( $cmd eq "comment" ) {

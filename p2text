@@ -1,8 +1,8 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -I.
 
-use Parse;
+use Pod::Parse;
 
-$x = new Parse;
+$x = new Pod::Parse;
 
 $col=0;
 $lmargin=5;
@@ -57,7 +57,7 @@ sub flowed {
 			if($c eq "X" or $c eq "R") {
 				flowed(@{$i[0]});
 			} elsif( $c eq "E" ) {
-				output_flow($Parse::Escape2ASCII{$i[0]});
+				output_flow($Pod::Parse::Escape2ASCII{$i[0]});
 			} else {
 			
 				$bold++ if $c eq "B";
@@ -91,7 +91,7 @@ sub doindex {
 				foreach (@i) {
 					$idx{join("/",@$_)} = [$name,$idx,"perlvar.pod"];
 				}
-				#print "Index: ",Parse::dumpout([@i]),"\n";
+				#print "Index: ",Pod::Parse::dumpout([@i]),"\n";
 			} else {
 				doindex(@i);
 			}

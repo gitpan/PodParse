@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 
-use Parse;
+use Pod::Parse;
 
-$x = new Parse;
+$x = new Pod::Parse;
 
 $col=0;
 $lmargin=5;
