@@ -1,0 +1,30 @@
+This is _INCOMPLETE_ code! Please do not use it, unless you have an idea how
+to improve it. I (Kenneth Albanowski, kjahds@kjahds.com) will be acting as
+maintainer for right now, so if you improve the code, please submit changes
+back to me. Thank you.
+
+ "Version 0.1"
+ 
+
+Each of the p2* executables is in a runnable state (more or less) without
+worrying about Makefile.PL, and each takes a single pod filename as an
+argument. They'll dump their respective formatted code to stdout.
+
+html currently does no separate indexing, although the steps are separated in
+the file. 
+
+
+ToDo:
+ 
+ Add indexing, and ideally, I want _all_ formatters to use the same indexing
+ database. This database would get installed as /usr/local/pod, or somesuch,
+ and all pod utilities could use it. A separate mini-formatter could then
+ generate the indexing.
+ 
+ Add computer language environments, and restrict the heuristics to only perl.
+ 
+ Add human language environments, and tailor heuristics and any generated
+ text to that language.
+ 
+ p2text was working _very_ well as last look, p2man less so. p2rtf is in
+ infancy. p2html should be a useful test bed. p2texi is a pain.
