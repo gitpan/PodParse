@@ -14,39 +14,83 @@ require Exporter;
 #open(F,"<pod/perlfunc.pod");
 #open(F,"<pod/perlvar.pod");
 
-# C<> = Code
-# B<> = Bold
-# I<> = Italics
-# V<> = Variable
-# P<> = Function/Procedure
-# S<> = Switch
-# F<> = Filename
-# M<> = Manpage
-# X<> = Index mark
-# R<> = Hyperreference to anything
-# L<> = Link to anything (old-style reference)
-# W<> = Single word (non-breaking spaces)
-# Z<> = No-space
-# E<> = HTML Escape
-# U<> = Unchanged/verbatim
-#
-# =without auto-indexing
-# =with full-item-indexing
-# =without man-warnings
-# =head?
-# =begin
-# =end
-# =over
-# =back
-# =item
-# =cut
-# =pod
-# =comment
-# =index
+=head1 NAME
+
+Pod::Parse - Parse the pod (Plain Old Documentation) portion of a file
+
+=head1 SYNOPSIS
+
+
+	use Parse;
+	$p = new Parse;
+	$p->parse_from_file_by_name(FILENAME, CALLBACK);
+
+=head1 DESCRIPTION
+
+=head2 MARKUP
+
+These are markups that are accepted. Several are introduced
+as internal markup, but their use in regular pod is encouraged
+to help the cross-referencing process.
+
+	C<> = Code
+	B<> = Bold
+	I<> = Italics
+	V<> = Variable
+	P<> = Function/Procedure
+	S<> = Switch
+	F<> = Filename
+	M<> = Manpage
+	X<> = Index mark
+	R<> = Hyperreference to anything
+	L<> = Link to anything (old-style reference)
+	W<> = Single word (non-breaking spaces)
+	Z<> = No-space
+	E<> = HTML Escape
+	U<> = Unchanged/verbatim
+	
+	=without auto-indexing
+	=with full-item-indexing
+	=without man-warnings
+
+The with/without commands are really generalized variable set/unset commands. C<=with
+X of Y> and C<=without X> are the general forms. C<Y> defaults to 1.
+
+	=head?
+
+The new =head is generalized to any heading level. Alternate forms are
+C<=head>, C<=heading>, C<=subheading>, C<=subsubheading>, etc.
+
+	=begin
+	=end
+	=over
+	=back
+	=item
+	=cut
+	=pod
+	=comment
+
+Each comment is presented to the formatter so that, if possible, it can be
+included in the final file as an invisible comment.
+	
+	=index
+	
+Which should have a syntax similar to X<>, if it were done.
+	
+	=resume
+	
+Opposite of =cut.
+
+=cut
 
 # First, a couple of utility functions for Parse users
 
-# Q&D array dumper
+=item dumpout
+
+Q&D array dumper
+
+
+=cut
 sub dumpout {
 	my($arg)=@_;
 	local($_);
@@ -57,8 +101,13 @@ sub dumpout {
 	}
 }
 
-# Wrap incoming text by turning spaces into newlines.
-# DO NOT FEED TABS!
+=item wrap TEXT, WIDTH
+
+Wrap incoming text by turning spaces into newlines.
+
+DO NOT FEED TABS!
+
+=cut
 sub wrap ($$) {
 	my($text,$width) = @_;
 	my($i,$w);
@@ -75,8 +124,19 @@ sub wrap ($$) {
 	$text;
 }
 
-# Given text, does something neat/nasty to it, and returns a possible
-# complex set of nested arrays
+=item chopup TEXT
+
+Given text with a possible reference in it, using a reference form of
+
+	Something(s)      for some manual section s (Fails for section 3g)
+	Something;SomethingElse
+	Something/SomethingElse
+
+return a complex set of nested arrays.
+
+Return TEXT if no references are found in it.
+
+=cut
 sub chopup {
 	local($_)= @_;
 	my($i);
@@ -114,7 +174,12 @@ sub chopup {
 }
 
 
-# Constructor for Parse objects
+=item new
+
+Constructor for Parse objects
+
+
+=cut
 sub new {
 	my($class) = @_;
 	my($hash) = {};
@@ -125,21 +190,25 @@ sub new {
 	$hash->{"tab-width"} = 8;
 	$hash->{"index-prefix"} = "";
 	
-	$hash->{filename} = "";
-	$hash->{line} = 1;
-	$hash->{par} = 1;
-	$hash->{pos} = 0;
-	$hash->{cutting} = 1;
-	$hash->{begun} = [];
-	$hash->{within} = 0;
-	$hash->{blockcomment} = 0;
-	$hash->{withinfile}=0;
+	$hash->{"filename"} = "";
+	$hash->{"line"} = 1;
+	$hash->{"par"} = 1;
+	$hash->{"pos"} = 0;
+	$hash->{"cutting"} = 1;
+	$hash->{"begun"} = [];
+	$hash->{"within"} = 0;
+	$hash->{"blockcomment"} = 0;
+	$hash->{"withinfile"}=0;
 	
 	bless $hash, $class;
 }
 
-# Method to parse a pod file, and either return the results
-# as one big array, or invoke a callback every interval
+=item parse_from_file_by_name FILENAME, CALLBACK
+
+Method to parse a pod file, and either return the results
+as one big array, or invoke a callback every interval
+
+=cut
 sub parse_from_file_by_name ($$;$) {
 	my($self,$filename,$callback) = @_;
 	local(*Handle);
@@ -194,7 +263,12 @@ sub parse_from_file_by_name ($$;$) {
 }
 
 
-# Given flowed text, return an ASCII equivalent missing formatting.
+=item deformat ARRAY
+
+Given flowed text, return an ASCII equivalent missing formatting.
+
+
+=cut
 sub deformat (@) {
 	my($out);
 	foreach $i (@_) {
@@ -209,8 +283,13 @@ sub deformat (@) {
 	$out;
 }
 
-# Given string, break it into possibly multiple elements, escaping
-# html special characters
+=item escape STRING
+
+Given STRING, break it into possibly multiple elements, escaping
+HTML special characters.
+
+
+=cut
 sub escape ($) {
 	my(@out);
 	while($_[0] =~ /[<>&]/) {
@@ -223,7 +302,12 @@ sub escape ($) {
 	@out;
 }
 
-# Sheer magic.
+=item flowed2 TEXT
+
+Sheer magic. (Undocumented technology, that is...)
+
+
+=cut
 sub flowed2 ($) {
 	local($_) = @_;
 	my(@out);
@@ -320,11 +404,18 @@ it:
 	@out;
 }
 
-# Prep and entry function for flowed2 
+=item flowed TEXT
+
+Preparation and entry function for flowed2().
+
+Return the result of flowed2() in an array.
+
+
+=cut
 sub flowed ($$) {
 	local($me,$_) = @_;
 	
-	# Canon. whitespace
+	# Canonicalize whitespace
 	s/[\r\n\t ]+/ /gs;
 	s/^\s+//;
 	s/\s+$//;
@@ -333,16 +424,20 @@ sub flowed ($$) {
 	
 }
 
-# Pre-file parse
+=item start_file FILENAME
+
+Set up the object before parsing the file.
+
+=cut
 sub start_file ($$) {
 	my($self,$filename) = @_;
-	$self->{filename} = $filename;
-	$self->{par} = 1;
-	$self->{line} = 1;
-	$self->{pos} = 0;
-	$self->{begun} = [];
-	$self->{blockcomment} = 0;
-	$self->{withinfile} = 0;
+	$self->{"filename"} = $filename;
+	$self->{"par"} = 1;
+	$self->{"line"} = 1;
+	$self->{"pos"} = 0;
+	$self->{"begun"} = [];
+	$self->{"blockcomment"} = 0;
+	$self->{"withinfile"} = 0;
 }
 
 #sub escape {
@@ -353,7 +448,16 @@ sub start_file ($$) {
 #	}
 #}
 
-# More magic.
+=item flow_heuristics TEXT
+
+Convert a block of text to the new style of markup.
+The heuristics are specific to Perl and the existing Perl documentation.
+
+(This code probably isn't reliable yet. The idea is to convert old style
+implicit references into new sytle explicit references using R<>. Then the
+formatter simply has to look do references based on R<> fields.)
+
+=cut
 sub flow_heuristics ($) {
 	my($arg) = @_;
 	
@@ -406,7 +510,7 @@ sub flow_heuristics ($) {
 	# Turn P<proc> into reference to procedure/function
 	$arg =~ s!P<(([\w:]+)(\(\))?)>!P<R<$1;functions/$2;$2>>!g;
 
-	# Turn S<swich> into reference to switch
+	# Turn S<switch> into reference to switch
 	$arg =~ s!S<(\-?[\w:]+)>!S<R<$1;switches/$1;$1>>!g;
 
 	# Turn F<filename> into reference to file
@@ -418,6 +522,13 @@ sub flow_heuristics ($) {
 	$arg;
 }
 
+=item head_heuristics ARGUMENT, LEVEL
+
+Perform specific heuristics on the =head portion. The NAME first level
+header causes an index to this manpage entry. Other headers generate local
+indices.
+
+=cut
 sub head_heuristics ($$$) {
 	my($self,$arg,$lev)=@_;
 
@@ -435,7 +546,28 @@ sub head_heuristics ($$$) {
 	return flow_heuristics($arg);
 }
 
-# The interesting bits.
+=item parse_paragraph PARAGRAPH, DUMP-SUB
+
+The interesting bits. If DUMP-SUB is defined, it'll be invoked with each
+parsed record. If not, the parsed records will be returned when all records
+derived from this paragraph are complete.
+
+(This is the code that takes a paragraphs worth of data and parses it into
+an internal representation, possible invoking the above heuristic code to
+add formatting.
+
+The list/listbegun/listpending stuff is, while functional, quite badly done,
+and needs a complete rewrite from a more stable perspective. There are
+actually two goals that are currently wrapped up in one implementation.
+First, we need to be able to keep track of block (=begin/=end) environments,
+and secondly we need to be able to keep a pending queue (FIFO) of parsed
+paragraphs if we are in a situation where we don't have enough information
+to finish parsing a current paragraph. This happens with lists, for example,
+because we can't deduce the type of the list (which is returned in both the
+begin and end records) until we see the first paragraph of text for that
+list.)
+
+=cut
 sub parse_paragraph ($$;$) {
 	my($self,$paragraph,$dump) = @_;
 	
@@ -742,7 +874,7 @@ sub parse_paragraph ($$;$) {
 		
 			# Trim minimum number of spaces from each line
 			# (This has effect of butting the text up against
-			# the left margin)
+			# the left margin without disturbing relative position)
 			$min = "^ {$min}";
 			s/$min//mg;
 		
@@ -773,9 +905,15 @@ sub parse_paragraph ($$;$) {
 	}
 }	
 
-# Post-file method to finish off anything that got started
-# but didn't get closed down.
+=item flush DUMP-SUB
 
+
+Post-file method to finish off anything that got started
+but didn't get closed down.
+
+Returns the resulting material.
+
+=cut
 sub flush ($;$) {
 	my($self,$dump) = @_;
 	
@@ -843,3 +981,11 @@ sub flush ($;$) {
 	"amp" => "&",
 	"quot" => '"',
 );
+
+=head1 BUGS/LIMITATIONS
+
+=head1 FILES
+
+=head1 AUTHOR(S)
+
+=cut

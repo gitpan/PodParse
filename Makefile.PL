@@ -8,5 +8,5 @@ use ExtUtils::MakeMaker;
 &WriteMakefile(
 	NAME => "Pod::Parse",
 	DISTNAME => "PodParse",
-	VERSION => "0.1",
+	VERSION => "0.02",
 );
